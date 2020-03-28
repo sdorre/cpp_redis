@@ -56,7 +56,7 @@ struct optional {
   template <class U>
   enableIf<std::is_convertible<U, T>::value, T>
   value_or(U&& v) const {
-    __CPP_REDIS_LOG(1, "value_or(U&& v)\n")
+    __CPP_REDIS_LOG(warn, "value_or(U&& v)\n")
     return std::forward<U>(v);
   }
 

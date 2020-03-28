@@ -90,6 +90,7 @@ namespace cpp_redis {
 			explicit xmessage(const reply_t &data);
 
 			friend std::ostream &operator<<(std::ostream &os, const xmessage &xm);
+			friend std::string operator<<(const std::string& is, const xmessage &xs);
 	};
 
 	typedef xmessage xmessage_t;
@@ -99,6 +100,7 @@ namespace cpp_redis {
 			explicit xstream(const reply_t &data);
 
 			friend std::ostream &operator<<(std::ostream &os, const xstream &xs);
+			friend std::string operator<<(const std::string& is, const xstream &xs);
 
 			std::string Stream;
 			std::vector<xmessage_t> Messages;
@@ -124,6 +126,7 @@ namespace cpp_redis {
 			explicit xstream_reply(const reply_t &data);
 
 			friend std::ostream &operator<<(std::ostream &os, const xstream_reply &xs);
+			friend std::string operator<<(const std::string& is, const xstream_reply &xs);
 
 	bool is_null() const {
 		if (empty())

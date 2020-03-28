@@ -105,7 +105,7 @@ namespace cpp_redis {
 							// The reply is an array if valid
 							cpp_redis::xstream_reply s_reply(reply);
 							if (!s_reply.is_null()) {
-								__CPP_REDIS_LOG(2, "Stream " << s_reply)
+								__CPP_REDIS_LOG(info, "Stream " << s_reply)
 								for (const auto &stream : s_reply) {
 									for (auto &m : stream.Messages) {
 										if (m_should_read_pending.load())
@@ -136,7 +136,7 @@ namespace cpp_redis {
 															return response;
 													});
 										} catch (std::exception &exc) {
-											__CPP_REDIS_LOG(1,
+											__CPP_REDIS_LOG(warn,
 											                "Processing failed for message id: " + m.get_id() +
 											                "\nDetails: " + exc.what());
 											throw exc;

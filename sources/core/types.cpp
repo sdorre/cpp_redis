@@ -73,6 +73,13 @@ namespace cpp_redis {
 		return os;
 	}
 
+	std::string operator<<(const std::string& is, const xmessage &xs) {
+		std::stringstream output;
+		output << is;
+		output << xs;
+		return output.str();
+	}
+
 	xmessage::xmessage() = default;
 
 	std::ostream &operator<<(std::ostream &os, const xstream &xs) {
@@ -82,6 +89,13 @@ namespace cpp_redis {
 		}
 		os << "\n\t]\n}";
 		return os;
+	}
+
+	std::string operator<<(const std::string& is, const xstream &xs) {
+		std::stringstream output;
+		output << is;
+		output << xs;
+		return output.str();
 	}
 
 	xstream_reply::xstream_reply(const reply &data) {
@@ -97,6 +111,13 @@ namespace cpp_redis {
 			os << x;
 		}
 		return os;
+	}
+
+	std::string operator<<(const std::string& is, const xstream_reply &xs) {
+		std::stringstream output;
+		output << is;
+		output << xs;
+		return output.str();
 	}
 
 	xinfo_reply::xinfo_reply(const cpp_redis::reply &data) {
