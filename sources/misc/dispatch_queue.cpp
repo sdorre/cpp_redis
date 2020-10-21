@@ -97,9 +97,9 @@ dispatch_queue::dispatch_thread_handler() {
 
       auto vals = op.message.get_values();
 
-      for (auto v : vals) {
-        std::cout << v.second << std::endl;
-      }
+      // for (auto v : vals) {
+      //   std::cout << v.second << std::endl;
+      // }
 
       auto res = op.callback(op.message);
 
