@@ -36,6 +36,7 @@
 #include <thread>
 #include <vector>
 
+#include <cpp_redis/misc/logger.hpp>
 #include <cpp_redis/impl/types.hpp>
 
 namespace cpp_redis {

@@ -23,6 +23,7 @@
 #include <cpp_redis/core/consumer.hpp>
 
 #include <functional>
+#include <cstring>
 
 using std::bind;
 using namespace std::placeholders;
@@ -103,17 +104,19 @@ consumer::poll() {
                              // The reply is an array if valid
                              cpp_redis::xstream_reply s_reply(reply);
                              if (!s_reply.is_null()) {
-                               __CPP_REDIS_LOG(info, "Stream " << s_reply)
+                               __CPP_REDIS_LOG(info, "==> Stream " << s_reply)
                                for (const auto& stream : s_reply) {
                                  for (auto& m : stream.Messages) {
                                    if (m_should_read_pending.load())
                                      m_read_id = m.get_id();
                                    try {
+                                     __CPP_REDIS_LOG(info, "==> dispatching" << m_name)
                                      m_dispatch_queue->dispatch(
                                        m,
                                        [&](const message_type& message) {
+                                         __CPP_REDIS_LOG(info, "==> consumer_callback " << m_name)
                                          auto response = cb.second.consumer_callback(message);
-
+                                         __CPP_REDIS_LOG(info, "==> consumer_callback done " << m_name)
                                          // add results to result stream
                                          m_client->ack_client.xadd(
                                            m_stream + ":results",
@@ -134,6 +137,8 @@ consumer::poll() {
                                            .sync_commit();
                                          return response;
                                        });
+                                      __CPP_REDIS_LOG(info, "==> consumer_callback done " << m_name)
+                                      
                                    }
                                    catch (std::exception& exc) {
                                      __CPP_REDIS_LOG(warn,
@@ -144,6 +149,7 @@ consumer::poll() {
                                }
                              }
                              else {
+                               __CPP_REDIS_LOG(info, "==> reply Null? " << m_name)
                                if (m_should_read_pending.load()) {
                                  m_should_read_pending.store(false);
                                  m_read_id = ">";
@@ -153,6 +159,7 @@ consumer::poll() {
                                  m_read_count = 1;
                                }
                              }
+                             __CPP_REDIS_LOG(info, "==> reply_callback done " << m_name)
                              return;
                            })
       .sync_commit(); //(std::chrono::milliseconds(1000));

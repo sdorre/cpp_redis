@@ -22,6 +22,7 @@
  */
 
 #include <cpp_redis/misc/dispatch_queue.hpp>
+#include <cstring>
 
 namespace cpp_redis {
 
@@ -81,11 +82,14 @@ dispatch_queue::dispatch_thread_handler() {
 
   do {
     //Wait until we have data or a quit signal
+    __CPP_REDIS_LOG(info, "==> queue waiting " << m_name)
     m_cv.wait(lock, [this] {
       return (!m_mq.empty() || m_quit);
     });
 
+    __CPP_REDIS_LOG(info, "==> queue notifying " << m_name)
     notify_handler(m_mq.size());
+    __CPP_REDIS_LOG(info, "==> queue notifying done " << m_name)
 
     //after wait, we own the lock
     if (!m_quit && !m_mq.empty()) {
@@ -101,11 +105,14 @@ dispatch_queue::dispatch_thread_handler() {
       //   std::cout << v.second << std::endl;
       // }
 
+      __CPP_REDIS_LOG(info, "==> queue callback " << m_name)
       auto res = op.callback(op.message);
-
+      __CPP_REDIS_LOG(info, "==> queue callback done " << m_name)
       lock.lock();
     }
   } while (!m_quit);
+
+  __CPP_REDIS_LOG(info, "==> queue game over " << m_name)
 }
 
 size_t
