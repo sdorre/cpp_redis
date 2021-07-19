@@ -59,8 +59,12 @@ void
 consumer::dispatch_changed_handler(size_t size) {
   if (size >= m_max_concurrency) {
     dispatch_queue_full.store(true);
-    dispatch_queue_changed.notify_all();
+    __CPP_REDIS_LOG(info, "==> Oups no notify " + m_name)
+  } else {
+    dispatch_queue_full.store(false);
+    __CPP_REDIS_LOG(info, "==> Oups no notify " + m_name)
   }
+  dispatch_queue_changed.notify_all();
 }
 
 void
@@ -81,14 +85,18 @@ consumer&
 consumer::commit() {
   while (!is_ready) {
     if (!is_ready) {
+      __CPP_REDIS_LOG(info, "==> commit waiting "+ m_name)
       std::unique_lock<std::mutex> dispatch_lock(dispatch_queue_changed_mutex);
       dispatch_queue_changed.wait(dispatch_lock, [&]() {
         return !dispatch_queue_full.load();
       });
       m_read_count = static_cast<int>(m_max_concurrency - m_dispatch_queue->size());
+      __CPP_REDIS_LOG(info, "==> polling " + m_name)
       poll();
+      __CPP_REDIS_LOG(info, "==> polling done " + m_name)
     }
   }
+  __CPP_REDIS_LOG(info, "==> commit done " + m_name)
   return *this;
 }
 
@@ -137,7 +145,7 @@ consumer::poll() {
                                            .sync_commit();
                                          return response;
                                        });
-                                      __CPP_REDIS_LOG(info, "==> consumer_callback done " + m_name)
+                                      __CPP_REDIS_LOG(info, "==> dispatching done " + m_name)
                                       
                                    }
                                    catch (std::exception& exc) {

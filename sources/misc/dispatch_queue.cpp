@@ -22,7 +22,7 @@
  */
 
 #include <cpp_redis/misc/dispatch_queue.hpp>
-#include <cstring>
+#include <string>
 
 namespace cpp_redis {
 
@@ -87,7 +87,7 @@ dispatch_queue::dispatch_thread_handler() {
       return (!m_mq.empty() || m_quit);
     });
 
-    __CPP_REDIS_LOG(info, "==> queue notifying " + m_name)
+    __CPP_REDIS_LOG(info, "==> queue notifying " + m_name + " size:"+std::to_string(m_mq.size()))
     notify_handler(m_mq.size());
     __CPP_REDIS_LOG(info, "==> queue notifying done " + m_name)
 

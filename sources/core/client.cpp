@@ -184,8 +184,11 @@ client::clear_sentinels() {
 client&
 client::send(const std::vector<std::string>& redis_cmd, const reply_callback_t& callback) {
   std::lock_guard<std::mutex> lock_callback(m_callbacks_mutex);
-
-  __CPP_REDIS_LOG(info, "cpp_redis::client attempts to store new command in the send buffer");
+  std::string tmp = "==>";
+  for (auto i: redis_cmd) {
+    tmp += i;
+  }
+  __CPP_REDIS_LOG(info, "cpp_redis::client attempts to store new command in the send buffer:" + tmp);
   unprotected_send(redis_cmd, callback);
   __CPP_REDIS_LOG(info, "cpp_redis::client stored new command in the send buffer");
 
